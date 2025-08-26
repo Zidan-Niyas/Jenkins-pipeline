@@ -13,6 +13,7 @@ pipeline {
         stage('Print Selected Environment') {
             steps {
                 echo "You selected: ${params.ENVIRONMENT}"
+                sh 'chmod +x build.sh'
             }
         }
 
@@ -21,13 +22,13 @@ pipeline {
                 script {
                     switch (params.ENVIRONMENT) {
                         case 'dev':
-                            sh './build.sh --dev'
+                            sh './build.sh ${params.ENVIRONMENT}'
                             break
                         case 'staging':
-                            sh './build.sh --staging'
+                            sh './build.sh ${params.ENVIRONMENT}'
                             break
                         case 'prod':
-                            sh './build.sh --prod'
+                            sh './build.sh ${params.ENVIRONMENT}'
                             break
                         default:
                             error "Unknown environment: ${params.ENVIRONMENT}"
