@@ -1,36 +1,40 @@
 pipeline {
     agent any
 
-    stages {
-        stage('Checkout') {
-            steps {
-                echo 'Checking out source code...'
-                // In real projects, you'd use `checkout scm`
-            }
-        }
-
-        stage('Build') {
-            steps {
-                echo 'Running build script...'
-                sh 'chmod +x build.sh'
-                sh './build.sh'
-            }
-        }
-
-        stage('Archive') {
-            steps {
-                echo 'Archiving build output...'
-                archiveArtifacts artifacts: 'build_output.txt', fingerprint: true
-            }
-        }
+    parameters {
+        choice(
+            name: 'ENVIRONMENT',
+            choices: ['dev', 'staging', 'prod'],
+            description: 'Choose the deployment environment'
+        )
     }
 
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
+    stages {
+        stage('Print Selected Environment') {
+            steps {
+                echo "You selected: ${params.ENVIRONMENT}"
+            }
         }
-        failure {
-            echo 'Pipeline failed.'
+
+        stage('Run Environment-Specific Build') {
+            steps {
+                script {
+                    switch (params.ENVIRONMENT) {
+                        case 'dev':
+                            sh './build.sh --dev'
+                            break
+                        case 'staging':
+                            sh './build.sh --staging'
+                            break
+                        case 'prod':
+                            sh './build.sh --prod'
+                            break
+                        default:
+                            error "Unknown environment: ${params.ENVIRONMENT}"
+                    }
+                }
+            }
         }
     }
 }
+
