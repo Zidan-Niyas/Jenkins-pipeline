@@ -22,13 +22,13 @@ pipeline {
                 script {
                     switch (params.ENVIRONMENT) {
                         case 'dev':
-                            sh './build.sh ${params.ENVIRONMENT}'
+                            sh "./build.sh ${params.ENVIRONMENT}"
                             break
                         case 'staging':
-                            sh './build.sh ${params.ENVIRONMENT}'
+                            sh "./build.sh ${params.ENVIRONMENT}"
                             break
                         case 'prod':
-                            sh './build.sh ${params.ENVIRONMENT}'
+                            sh "./build.sh ${params.ENVIRONMENT}"
                             break
                         default:
                             error "Unknown environment: ${params.ENVIRONMENT}"
